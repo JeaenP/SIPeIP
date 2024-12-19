@@ -1,10 +1,10 @@
 import { cookies } from 'next/headers'
 import { MainSidebar } from "@/components/main-sidebar"
-import { EntityForm } from "@/components/entity-form"
+import { ProgramasTable } from "@/components/programas-table"
 import { SidebarInset, SidebarTrigger } from "@/components/ui/sidebar"
 import { Toaster } from "sonner"
 
-export default function Home() {
+export default function ProgramasPage() {
   const userSession = cookies().get('user_session')
   const userData = userSession ? JSON.parse(userSession.value) : null
 
@@ -15,22 +15,30 @@ export default function Home() {
         <header className="flex h-16 items-center gap-4 border-b bg-background px-6">
           <SidebarTrigger />
           <div>
-            <h1 className="text-lg font-semibold">Sistema Integrado de Planificación e Inversión Pública</h1>
-            <p className="text-sm text-muted-foreground">Módulo de Planificación</p>
+            <h1 className="text-lg font-semibold">Programas Institucionales</h1>
+            <p className="text-sm text-muted-foreground">Gestión de Programas</p>
           </div>
         </header>
-        <main className="flex-1 p-6 w-full">
+        <main className="flex-1 p-6">
+        <img
+          src="/images/LOGOSIPEIP.png" /* Ruta de tu imagen */
+          alt="Background"
+          className="background-image"
+      />
           {userData ? (
-            <EntityForm userRucEntidad={userData.rucEntidad} />
+            <ProgramasTable userRucEntidad={userData.rucEntidad} />
           ) : (
             <div>Error: No se encontró información del usuario</div>
           )}
+          
         </main>
         
       </SidebarInset>
       
       <Toaster />
+      
     </div>
+    
   )
 }
 
