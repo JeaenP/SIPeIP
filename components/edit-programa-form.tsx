@@ -222,8 +222,7 @@ export function EditProgramaForm({ programa, onClose }: EditProgramaFormProps) {
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
     try {
       setIsSubmitting(true)
-  
-      // Realizar la actualización en la base de datos
+      
       const response = await fetch(`/api/programas/${programa._id}`, {
         method: 'PUT',
         headers: {
@@ -234,21 +233,12 @@ export function EditProgramaForm({ programa, onClose }: EditProgramaFormProps) {
           entidad: entidad?.razonSocial,
         }),
       })
-  
+
       if (!response.ok) throw new Error('Error al actualizar programa')
-  
+      
       toast.success('Programa actualizado exitosamente')
-  
-      // Obtener los datos actualizados desde la respuesta
-      const updatedProgramData = await response.json()
-  
-      // Usar setValue para actualizar el formulario con los nuevos valores
-      form.setValue('nombre', updatedProgramData.nombre)
-      form.setValue('descripcion', updatedProgramData.descripcion)
-      form.setValue('codigoMF', updatedProgramData.codigoMF || '')
-      form.setValue('tipo', updatedProgramData.tipo)
-  
-      // Opcional: Recargar los proyectos, productos y entidad si es necesario
+      // Removed onClose() to keep the form open
+      // Instead, reload the program data
       loadProyectos()
       loadProductos()
       loadEntidad()
@@ -259,8 +249,6 @@ export function EditProgramaForm({ programa, onClose }: EditProgramaFormProps) {
       setIsSubmitting(false)
     }
   }
-  
-  
 
   return (
     <div className="space-y-6">

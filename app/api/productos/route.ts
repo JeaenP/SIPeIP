@@ -56,11 +56,10 @@ export async function POST(request: Request) {
     }
 
     const result = await db.collection('productos').insertOne(producto)
-
-    const programaObjectId = new ObjectId(programaId)
+    
     // Add product to program's products array
     await db.collection('programas').updateOne(
-      { _id: programaObjectId },  // Convertir programaId en ObjectId
+      { _id: programaId },
       { $push: { productos: result.insertedId } }
     )
     

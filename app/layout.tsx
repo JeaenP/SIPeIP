@@ -21,9 +21,7 @@ export default function RootLayout({
         <SidebarProvider>
           {children}
         </SidebarProvider>
-        
       </body>
-      
     </html>
   )
 }

@@ -4,7 +4,6 @@ import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
 import * as z from "zod"
 import { useState, useEffect } from "react"
-import { updateEntidad, getEntidadByRuc } from "@/app/actions"
 import type { Entidad } from "@/lib/models/types"
 
 import { Button } from "@/components/ui/button"
@@ -27,6 +26,7 @@ import {
 import { Textarea } from "@/components/ui/textarea"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { toast } from "sonner"
+import { Spinner } from "@/components/ui/spinner"
 
 const formSchema = z.object({
   nombreEnteSector: z.string(),
@@ -92,36 +92,34 @@ export function EntityForm({ userRucEntidad }: EntityFormProps) {
   useEffect(() => {
     async function loadEntityData() {
       try {
-        const result = await getEntidadByRuc(userRucEntidad)
-        if (result.success && result.data) {
-          const entidad = result.data
-          form.reset({
-            nombreEnteSector: entidad.nombreEnteSector,
-            rucEntidad: entidad.rucEntidad,
-            codigoEntidadFinanciera: entidad.codigoEntidadFinanciera,
-            codigoADM: entidad.codigoADM,
-            numeroRegistroOficial: entidad.numeroRegistroOficial.toString(),
-            consejo: entidad.consejo,
-            zona: entidad.zona,
-            tipoNorma: entidad.tipoNorma,
-            descripcionTipoNorma: entidad.descripcionTipoNorma,
-            razonSocial: entidad.razonSocial,
-            funcionInstitucional: entidad.funcionInstitucional,
-            sector: entidad.sector,
-            mision: entidad.mision,
-            vision: entidad.vision,
-            estructuraOrganizacional: entidad.estructuraOrganizacional,
-            estado: entidad.estado,
-            gpr: entidad.gpr,
-            numeroNorma: entidad.numeroNorma?.toString() ?? "",
-            nombre: entidad.nombre ?? "",
-            tipoInstitucion: entidad.tipoInstitucion,
-            numeroEntidad: entidad.numeroEntidad.toString(),
-            funcion: entidad.funcion,
-          })
-        } else {
-          toast.error('Error al cargar los datos de la entidad')
-        }
+        const response = await fetch(`/api/entidades/${userRucEntidad}`)
+        if (!response.ok) throw new Error('Error al cargar entidad')
+        
+        const entidad = await response.json()
+        form.reset({
+          nombreEnteSector: entidad.nombreEnteSector,
+          rucEntidad: entidad.rucEntidad,
+          codigoEntidadFinanciera: entidad.codigoEntidadFinanciera,
+          codigoADM: entidad.codigoADM,
+          numeroRegistroOficial: entidad.numeroRegistroOficial.toString(),
+          consejo: entidad.consejo,
+          zona: entidad.zona,
+          tipoNorma: entidad.tipoNorma,
+          descripcionTipoNorma: entidad.descripcionTipoNorma,
+          razonSocial: entidad.razonSocial,
+          funcionInstitucional: entidad.funcionInstitucional,
+          sector: entidad.sector,
+          mision: entidad.mision,
+          vision: entidad.vision,
+          estructuraOrganizacional: entidad.estructuraOrganizacional,
+          estado: entidad.estado,
+          gpr: entidad.gpr,
+          numeroNorma: entidad.numeroNorma?.toString() ?? "",
+          nombre: entidad.nombre ?? "",
+          tipoInstitucion: entidad.tipoInstitucion,
+          numeroEntidad: entidad.numeroEntidad.toString(),
+          funcion: entidad.funcion,
+        })
       } catch (error) {
         console.error('Error loading entity data:', error)
         toast.error('Error al cargar los datos de la entidad')
@@ -136,18 +134,21 @@ export function EntityForm({ userRucEntidad }: EntityFormProps) {
   async function onSubmit(values: z.infer<typeof formSchema>) {
     try {
       setIsSubmitting(true)
-      const formData = new FormData()
       
-      Object.entries(values).forEach(([key, value]) => {
-        formData.append(key, value.toString())
+      const response = await fetch(`/api/entidades/${userRucEntidad}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(values),
       })
 
-      const result = await updateEntidad(formData)
+      const data = await response.json()
 
-      if (result.success) {
-        toast.success(result.message)
+      if (response.ok) {
+        toast.success(data.message)
       } else {
-        toast.error(result.message)
+        toast.error(data.error || 'Error al actualizar la entidad')
       }
     } catch (error) {
       console.error('Error al procesar el formulario:', error)
@@ -158,7 +159,7 @@ export function EntityForm({ userRucEntidad }: EntityFormProps) {
   }
 
   if (isLoading) {
-    return <div>Cargando datos de la entidad...</div>
+    return <Spinner />
   }
 
   return (
@@ -166,7 +167,7 @@ export function EntityForm({ userRucEntidad }: EntityFormProps) {
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
         <Card className="w-full">
           <CardHeader>
-            <CardTitle>Información de la Entidad</CardTitle>
+            <CardTitle className="text-primary">Información de la Entidad</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">

@@ -4,6 +4,7 @@ import { useState, useEffect } from "react"
 import { Edit, Trash2, Search } from 'lucide-react'
 import { toast } from "sonner"
 import type { Programa } from "@/lib/models/types"
+import { Spinner } from "@/components/ui/spinner"
 
 import {
   Table,
@@ -82,13 +83,13 @@ export function ProgramasTable({ userRucEntidad }: ProgramasTableProps) {
   }
 
   if (isLoading) {
-    return <div>Cargando programas...</div>
+    return <Spinner />
   }
 
   return (
     <Card>
       <CardHeader className="flex flex-row items-center justify-between">
-        <CardTitle>Lista de Programas</CardTitle>
+        <CardTitle className="text-primary">Lista de Programas</CardTitle>
         <Button>Añadir Nuevo</Button>
       </CardHeader>
       <CardContent>

@@ -20,7 +20,7 @@ const navigationItems = [
   {
     title: "Administración",
     items: [
-      { title: "Gestión de entidades", icon: Users, url: "/" },
+      { title: "Gestión de entidades", icon: Users, url: "/entidades" },
     ],
   },
   {
@@ -71,7 +71,7 @@ export function MainSidebar() {
       {/* Header */}
       <SidebarHeader className="border-b p-4">
         <img
-          src="/images/LOGO2.png" /* Ruta de tu imagen */
+          src="https://i.imgur.com/CJGFHOi.png" /* Ruta de tu imagen */
           alt="Background"
         />
         <div className="flex items-center space-x-1">
