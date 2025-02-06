@@ -1,11 +1,12 @@
 import { cookies } from 'next/headers'
 import { MainSidebar } from "@/components/main-sidebar"
+import { ProgramasTable } from "@/components/programas-table"
 import { SidebarInset, SidebarTrigger } from "@/components/ui/sidebar"
 import { Toaster } from "sonner"
-import { EntityInfo } from "@/components/entity-info"
 import { PageLayout } from "@/components/page-layout"
+import { EntityInfo } from "@/components/entity-info"
 
-export default function Home() {
+export default function ProgramasPage() {
   const userSession = cookies().get('user_session')
   const userData = userSession ? JSON.parse(userSession.value) : null
 
@@ -18,8 +19,8 @@ export default function Home() {
             <div className="flex items-center gap-4">
               <SidebarTrigger />
               <div>
-                <h1 className="text-lg font-semibold">Inicio</h1>
-                <p className="text-sm text-muted-foreground">Bienvenido al Sistema de Planificación</p>
+                <h1 className="text-lg font-semibold">Programas Institucionales</h1>
+                <p className="text-sm text-muted-foreground">Gestión de Programas</p>
               </div>
             </div>
             {userData && (
@@ -29,8 +30,12 @@ export default function Home() {
               </div>
             )}
           </header>
-          <main className="flex-1 p-6 w-full">
-            {/* Empty home page */}
+          <main className="flex-1 p-6">
+            {userData ? (
+              <ProgramasTable userRucEntidad={userData.rucEntidad} />
+            ) : (
+              <div>Error: No se encontró información del usuario</div>
+            )}
           </main>
         </SidebarInset>
         <Toaster />
